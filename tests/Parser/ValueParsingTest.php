@@ -314,4 +314,23 @@ class ValueParsingTest extends TestCase
         $original = trim(file_get_contents(__DIR__.'/../resources/valid/tag-contents-nested-braces.bib'));
         $this->assertSame($original, $text);
     }
+
+    /**
+     * @group regression
+     * @group bug62
+     *
+     * @see https://github.com/renanbr/bibtex-parser/issues/62
+     */
+    public function testStringVariableWithSpecialCharacterMustBeAccepted()
+    {
+        $listener = new DummyListener();
+
+        $parser = new Parser();
+        $parser->addListener($listener);
+        $parser->parseFile(__DIR__.'/../resources/valid/string-var-with-special-char-basic.bib');
+
+        list($text, $type, $context) = $listener->calls[7];
+        $this->assertSame(Parser::RAW_TAG_CONTENT, $type);
+        $this->assertSame('foo-bar', $text);
+    }
 }

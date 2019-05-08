@@ -359,7 +359,7 @@ class Parser
      */
     private function readRawTagContent($char)
     {
-        if (preg_match('/^[a-zA-Z0-9]$/', $char)) {
+        if (preg_match('/^[a-zA-Z0-9_\+:\-\.\/]$/', $char)) {
             $this->appendToBuffer($char);
         } else {
             $this->throwExceptionIfBufferIsEmpty($char);

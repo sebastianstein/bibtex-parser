@@ -91,4 +91,24 @@ class ValueReadingTest extends TestCase
         $this->assertSame('', $entry['mustEmpty']);
         $this->assertNull($entry['mustNull']);
     }
+
+    /**
+     * @group regression
+     * @group bug62
+     *
+     * @see https://github.com/renanbr/bibtex-parser/issues/62
+     */
+    public function testStringVariableWithSpecialCharacterMustBeAccepted()
+    {
+        $listener = new Listener();
+
+        $parser = new Parser();
+        $parser->addListener($listener);
+        $parser->parseFile(__DIR__.'/../resources/valid/string-var-with-special-char.bib');
+
+        $entries = $listener->export();
+
+        $entries[10]['author'];
+        $this->assertSame('Balbuena and Cera and Dianez and Garcia-Vazquez', $entries[10]['author']);
+    }
 }
