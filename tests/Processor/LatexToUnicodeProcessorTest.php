@@ -21,6 +21,16 @@ use RenanBr\BibTexParser\Processor\LatexToUnicodeProcessor;
  */
 class LatexToUnicodeProcessorTest extends TestCase
 {
+    protected function setUp()
+    {
+        exec('which pandoc', $output, $retVal);
+        if ($retVal !== 0) {
+            $this->markTestSkipped(
+                'Pandoc is not installed, skiping this test'
+            );
+        }
+    }
+
     public function testTextAsInput()
     {
         $processor = new LatexToUnicodeProcessor();
