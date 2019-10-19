@@ -1,5 +1,8 @@
 language: php
 
+services:
+    - docker
+
 sudo: false
 
 cache:
@@ -27,7 +30,22 @@ before_script:
     - composer install --no-interaction
 
 script:
-    - ./vendor/bin/phpunit --coverage-clover=coverage.xml
+    - ./vendor/bin/phpunit
 
-after_success:
-    - bash <(curl -s https://codecov.io/bash)
+jobs:
+    include:
+        - stage: phpstan
+          php: 7.3
+          script:
+              - docker pull phpstan/phpstan
+              - docker run --rm -v $TRAVIS_BUILD_DIR:/app phpstan/phpstan analyse --level 5 --no-interaction --no-progress /app/src
+        - stage: coverage
+          php: 7.3
+          script:
+              - ./vendor/bin/phpunit --coverage-clover=coverage.xml
+              - bash <(curl -s https://codecov.io/bash)
+
+stages:
+    - phpstan
+    - test
+    - coverage
