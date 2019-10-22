@@ -12,45 +12,37 @@
 namespace RenanBr\BibTexParser\Processor;
 
 
-use DateTime;
+use DateTimeImmutable;
+use Exception;
 
 class DateProcessor
 {
-    use TagCoverageTrait;
+    use TagSearchTrait;
 
     /**
      * @param array $entry
      *
      * @return array
+     * @throws Exception
      */
     public function __invoke(array $entry)
     {
-        $covered = $this->getCoveredTags(array_keys($entry));
+        $yearTag = $this->tagSearch('year', array_keys($entry));
+        $monthTag = $this->tagSearch('month', array_keys($entry));
         $day = null;
         $month = null;
         $year = null;
-        foreach ($covered as $tag) {
-            if ($tag === 'month') {
-                $monthArray = explode('#', $entry[$tag]);
-                if (strpos($monthArray[0], '~')) {
-                    $day = $this->getDay(trim($monthArray[0]));
-                    $month = trim($monthArray[1]);
-                } else if (strpos($monthArray[1], '~')) {
-                    $day = $this->getDay(trim($monthArray[1]));
-                    $month = trim($monthArray[0]);
+        if ($yearTag !== null && $monthTag !== null) {
+            $year = $entry[$yearTag];
+            $monthArray = explode('~', $entry[$monthTag]);
+            if (count($monthArray) === 2) {
+                list($day, $month) = $monthArray;
+                $dateMonthNumber = date_parse($month);
+                if (checkdate($dateMonthNumber['month'], $day, $year)) {
+                    $entry['_date'] = new DateTimeImmutable(date('d/m/Y', strtotime($day . ' ' . $month . ' ' . $year)));
                 }
             }
-            if ($tag === 'year') {
-                $year = $entry[$tag];
-            }
         }
-        $entry['month'] = $day . '~' . $month;
-        $entry['_date'] = new DateTime(date('d/m/Y', strtotime($month . ' ' . $day . ' ' . $year)));
         return $entry;
-    }
-
-    private function getDay($day)
-    {
-        return str_replace(['"', '~'], '', $day);
     }
 }
