@@ -13,21 +13,19 @@ namespace RenanBr\BibTexParser\Processor;
 
 class FillMissingProcessor
 {
-    use TagCoverageTrait;
+    use TagSearchTrait;
 
     protected $missingFields;
 
     public function __construct($missingFields)
     {
         $this->missingFields = $missingFields;
-
-        $this->setTagCoverage(['author', 'editor']);
     }
 
     public function __invoke(array $entry)
     {
         foreach ($this->missingFields as $tag => $value) {
-            if(!array_key_exists($tag, $entry)) {
+            if(!$this->tagSearch($tag, $entry)) {
                 $entry[$tag] = $value;
             }
         }
