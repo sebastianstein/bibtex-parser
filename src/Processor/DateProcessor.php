@@ -25,7 +25,7 @@ class DateProcessor
     private $tagName;
 
     /**
-     * @param null $tagName
+     * @param string $tagName
      */
     public function __construct($tagName = null)
     {
@@ -42,10 +42,11 @@ class DateProcessor
         $yearTag = $this->tagSearch('year', array_keys($entry));
         $monthTag = $this->tagSearch('month', array_keys($entry));
         if (null !== $yearTag && null !== $monthTag) {
-            $year = $entry[$yearTag];
+            $year = (int) $entry[$yearTag];
             $monthArray = explode('~', $entry[$monthTag]);
             if (2 === \count($monthArray)) {
                 list($day, $month) = $monthArray;
+                $day = (int) $day;
                 $dateMonthNumber = date_parse($month);
                 $month = $dateMonthNumber['month'] ?: null;
                 if (checkdate($month, $day, $year)) {
