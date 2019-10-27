@@ -11,38 +11,50 @@
 
 namespace RenanBr\BibTexParser\Processor;
 
-
 use DateTimeImmutable;
-use Exception;
 
 class DateProcessor
 {
+    const TAG_NAME = '_date';
+
     use TagSearchTrait;
+
+    /**
+     * @var string
+     */
+    private $tagName;
+
+    /**
+     * @param null $tagName
+     */
+    public function __construct($tagName = null)
+    {
+        $this->tagName = $tagName ?: self::TAG_NAME;
+    }
 
     /**
      * @param array $entry
      *
      * @return array
-     * @throws Exception
      */
     public function __invoke(array $entry)
     {
         $yearTag = $this->tagSearch('year', array_keys($entry));
         $monthTag = $this->tagSearch('month', array_keys($entry));
-        $day = null;
-        $month = null;
-        $year = null;
-        if ($yearTag !== null && $monthTag !== null) {
+        if (null !== $yearTag && null !== $monthTag) {
             $year = $entry[$yearTag];
             $monthArray = explode('~', $entry[$monthTag]);
-            if (count($monthArray) === 2) {
+            if (2 === \count($monthArray)) {
                 list($day, $month) = $monthArray;
                 $dateMonthNumber = date_parse($month);
-                if (checkdate($dateMonthNumber['month'], $day, $year)) {
-                    $entry['_date'] = new DateTimeImmutable(date('d/m/Y', strtotime($day . ' ' . $month . ' ' . $year)));
+                $month = $dateMonthNumber['month'] ?: null;
+                if (checkdate($month, $day, $year)) {
+                    $timestamp = mktime(0, 0, 0, $month, $day, $year);
+                    $entry[$this->tagName] = new DateTimeImmutable(date('Y-m-d', $timestamp));
                 }
             }
         }
+
         return $entry;
     }
 }
