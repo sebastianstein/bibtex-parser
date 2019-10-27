@@ -11,17 +11,23 @@
 
 namespace RenanBr\BibTexParser\Processor;
 
-use RenanBr\BibTexParser\Constant;
-
 class UrlFromDoiProcessor
 {
+    const FORMAT = 'https://doi.org/%s';
+
     use TagSearchTrait;
 
-    private $urlDoiPrefix;
+    /**
+     * @var string
+     */
+    private $urlFormat;
 
-    public function __construct($urlDoiPrefix = null)
+    /**
+     * @param string $urlFormat
+     */
+    public function __construct($urlFormat = null)
     {
-        $this->urlDoiPrefix = $urlDoiPrefix;
+        $this->urlFormat = $urlFormat ?: self::FORMAT;
     }
 
     /**
@@ -33,17 +39,13 @@ class UrlFromDoiProcessor
     {
         $doiTag = $this->tagSearch('doi', array_keys($entry));
         $urlTag = $this->tagSearch('url', array_keys($entry));
-        if ($urlTag === null && $doiTag !== null) {
+        if (null === $urlTag && null !== $doiTag) {
             $doiValue = $entry[$doiTag];
-            if ($doiValue !== '') {
-                if ($this->urlDoiPrefix !== null) {
-                    $entry['url'] = $this->urlDoiPrefix . '/' . $doiValue;
-                } else {
-                    $entry['url'] = sprintf(Constant::$URL_DOI_FORMAT, $doiValue);
-                }
+            if (\is_string($doiValue) && '' !== $doiValue) {
+                $entry['url'] = sprintf($this->urlFormat, $doiValue);
             }
         }
+
         return $entry;
     }
-
 }

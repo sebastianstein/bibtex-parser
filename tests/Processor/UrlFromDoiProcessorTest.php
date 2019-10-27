@@ -14,6 +14,9 @@ namespace RenanBr\BibTexParser\Test\Processor;
 use PHPUnit\Framework\TestCase;
 use RenanBr\BibTexParser\Processor\UrlFromDoiProcessor;
 
+/**
+ * @coversNothing
+ */
 class UrlFromDoiProcessorTest extends TestCase
 {
     public function testDoi()
@@ -32,7 +35,7 @@ class UrlFromDoiProcessorTest extends TestCase
             'doi' => '',
         ]);
         $this->assertSame(['doi' => ''], $entry);
-        $this->assertFalse(array_key_exists('url', $entry));
+        $this->assertFalse(\array_key_exists('url', $entry));
     }
 
     public function testDoiWithUrl()
@@ -40,14 +43,14 @@ class UrlFromDoiProcessorTest extends TestCase
         $processor = new UrlFromDoiProcessor();
         $entry = $processor([
             'doi' => 'xyz',
-            'url' => 'https://doi.org/xyz'
+            'url' => 'https://doi.org/abc',
         ]);
-        $this->assertSame(['doi' => 'xyz', 'url' => 'https://doi.org/xyz'], $entry);
+        $this->assertSame(['doi' => 'xyz', 'url' => 'https://doi.org/abc'], $entry);
     }
 
     public function testDoiCustomUrl()
     {
-        $processor = new UrlFromDoiProcessor('https://custom-doi-url.org');
+        $processor = new UrlFromDoiProcessor('https://custom-doi-url.org/%s');
         $entry = $processor([
             'doi' => 'xyz',
         ]);
