@@ -24,8 +24,10 @@ class FillMissingProcessor
 
     public function __invoke(array $entry)
     {
+        $tags = array_keys($entry);
+
         foreach ($this->missingFields as $tag => $value) {
-            if(!$this->tagSearch($tag, $entry)) {
+            if(!$this->tagSearch($tag, $tags)) {
                 $entry[$tag] = $value;
             }
         }
