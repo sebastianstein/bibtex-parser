@@ -73,7 +73,7 @@ Array
 (
     [0] => Array
         (
-            [type] => article
+            [_type] => article
             [citation-key] => einstein1916relativity
             [title] => Relativity: The Special and General Theory
             [author] => Einstein, Albert
@@ -109,7 +109,7 @@ Despite you can't configure the `Parser`, you can append as many `Processor` as 
     - e.g. `hello # " world"` tag's content will generate `hello world` [string]
 - [Tag content abbreviation handling](http://www.bibtex.org/Format/);
     - e.g. `@string{foo="bar"} @misc{bar=foo}` will make `$entries[1]['bar']` assume `bar` as value
-- Publication's type is exposed as `type` tag;
+- Publication's type is exposed as `_type` tag;
 - Citation key is exposed as `citation-key` tag;
 - Original entry text is exposed as `_original` tag.
 
