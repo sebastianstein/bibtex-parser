@@ -63,7 +63,7 @@ class Listener implements ListenerInterface
         switch ($type) {
             case Parser::TYPE:
                 // Starts a new entry
-                $this->entries[] = ['type' => $text];
+                $this->entries[] = ['_type' => $text];
                 break;
 
             case Parser::CITATION_KEY:
