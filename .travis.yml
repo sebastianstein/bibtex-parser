@@ -35,6 +35,11 @@ script:
 
 jobs:
     include:
+        - stage: php-cs-fixer
+          php: 7.4
+          script:
+              - wget https://cs.symfony.com/download/php-cs-fixer-v2.phar -O php-cs-fixer
+              - php php-cs-fixer fix --dry-run --diff --using-cache=no -vvv
         - stage: phpstan
           php: 7.4
           script:
@@ -47,6 +52,7 @@ jobs:
               - bash <(curl -s https://codecov.io/bash)
 
 stages:
+    - php-cs-fixer
     - phpstan
     - test
     - coverage
