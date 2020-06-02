@@ -42,7 +42,7 @@ You are browsing the documentation of **BibTeX Parser 2.x**, the latest version.
 ## Installing
 
 ```bash
-composer require renanbr/bibtex-parser ^2
+composer require renanbr/bibtex-parser
 ```
 
 ## Usage
