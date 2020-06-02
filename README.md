@@ -19,8 +19,6 @@
 
 You are browsing the documentation of **BibTeX Parser 2.x**, the latest version.
 
-[Documentation for version 1.x is available here](https://github.com/renanbr/bibtex-parser/blob/1.x/README.md).
-
 ## Table of contents
 
 * [Installing](#installing)
@@ -30,6 +28,10 @@ You are browsing the documentation of **BibTeX Parser 2.x**, the latest version.
    * [Tag name case](#tag-name-case)
    * [Authors and editors](#authors-and-editors)
    * [Keywords](#keywords)
+   * [Date](#date)
+   * [Fill missing](#fill-missing)
+   * [Trim](#trim)
+   * [Url from DOI](#url-from-doi)
    * [LaTeX to unicode](#latex-to-unicode)
    * [Custom](#custom)
 * [Handling errors](#handling-errors)
@@ -38,7 +40,7 @@ You are browsing the documentation of **BibTeX Parser 2.x**, the latest version.
 ## Installing
 
 ```bash
-composer require renanbr/bibtex-parser ^2
+composer require renanbr/bibtex-parser
 ```
 
 ## Usage
@@ -46,6 +48,7 @@ composer require renanbr/bibtex-parser ^2
 ```php
 use RenanBr\BibTexParser\Listener;
 use RenanBr\BibTexParser\Parser;
+use RenanBr\BibTexParser\Processor;
 
 require 'vendor/autoload.php';
 
@@ -57,11 +60,25 @@ $bibtex = <<<BIBTEX
 }
 BIBTEX;
 
-$parser = new Parser();          // Create a Parser
-$listener = new Listener();      // Create and configure a Listener
-$parser->addListener($listener); // Attach the Listener to the Parser
-$parser->parseString($bibtex);   // or parseFile('/path/to/file.bib')
-$entries = $listener->export();  // Get processed data from the Listener
+// Create and configure a Listener
+$listener = new Listener();
+$listener->addProcessor(new Processor\TagNameCaseProcessor(CASE_LOWER));
+// $listener->addProcessor(new Processor\NamesProcessor());
+// $listener->addProcessor(new Processor\KeywordsProcessor());
+// $listener->addProcessor(new Processor\DateProcessor());
+// $listener->addProcessor(new Processor\FillMissingProcessor([/* ... */]));
+// $listener->addProcessor(new Processor\TrimProcessor());
+// $listener->addProcessor(new Processor\UrlFromDoiProcessor());
+// $listener->addProcessor(new Processor\LatexToUnicodeProcessor());
+// ... you can append as many Processors as you want
+
+// Create a Parser and attach the listener
+$parser = new Parser();
+$parser->addListener($listener);
+
+// Parse the content, then read processed data from the Listener
+$parser->parseString($bibtex); // or parseFile('/path/to/file.bib')
+$entries = $listener->export();
 
 print_r($entries);
 ```
@@ -119,6 +136,8 @@ This project is shipped with some useful processors.
 
 In BibTeX the tag's names aren't case-sensitive. This library exposes entries as [array], in which keys are case-sensitive. To avoid this misunderstanding, you can force the tags' name character case using `TagNameCaseProcessor`.
 
+<details><summary>Usage</summary>
+
 ```php
 use RenanBr\BibTexParser\Processor\TagNameCaseProcessor;
 
@@ -142,9 +161,13 @@ Array
 )
 ```
 
+</details>
+
 ### Authors and editors
 
 BibTeX recognizes four parts of an author's name: First Von Last Jr. If you would like to parse the `author` and `editor` tags included in your entries, you can use the `NamesProcessor` class.
+
+<details><summary>Usage</summary>
 
 ```php
 use RenanBr\BibTexParser\Processor\NamesProcessor;
@@ -180,9 +203,13 @@ Array
 )
 ```
 
+</details>
+
 ### Keywords
 
 The `keywords` tag contains a list of expressions represented as [string], you might want to read them as an [array] instead.
+
+<details><summary>Usage</summary>
 
 ```php
 use RenanBr\BibTexParser\Processor\KeywordsProcessor;
@@ -214,12 +241,176 @@ Array
 )
 ```
 
+</details>
+
+### Date
+
+It adds a new tag `_date` as [DateTimeImmutable](https://www.php.net/manual/class.datetimeimmutable.php).
+This processor adds the new tag **if and only if** this the tags `month` and `year` are fulfilled.
+
+<details><summary>Usage</summary>
+
+```php
+use RenanBr\BibTexParser\Processor\DateProcessor;
+
+$listener->addProcessor(new DateProcessor());
+```
+
+```bib
+@misc{
+  month="1~oct",
+  year=2000
+}
+```
+
+```
+Array
+(
+    [0] => Array
+        (
+            [type] => misc
+            [month] => 1~oct
+            [year] => 2000
+            [_date] => DateTimeImmutable Object
+                (
+                    [date] => 2000-10-01 00:00:00.000000
+                    [timezone_type] => 3
+                    [timezone] => UTC
+                )
+        )
+)
+```
+
+</details>
+
+### Fill missing
+
+It puts a default value to some missing field.
+
+<details><summary>Usage</summary>
+
+```php
+use RenanBr\BibTexParser\Processor\FillMissingProcessor;
+
+$listener->addProcessor(new FillMissingProcessor([
+    'title' => 'This entry has no title',
+    'year' => 1970,
+]));
+```
+
+```bib
+@misc{
+}
+
+@misc{
+    title="I do exist"
+}
+```
+
+```
+Array
+(
+    [0] => Array
+        (
+            [type] => misc
+            [title] => This entry has no title
+            [year] => 1970
+        )
+    [1] => Array
+        (
+            [type] => misc
+            [title] => I do exist
+            [year] => 1970
+        )
+)
+```
+
+</details>
+
+### Trim
+
+Apply [trim()](https://www.php.net/trim) to all tags.
+
+<details><summary>Usage</summary>
+
+```php
+use RenanBr\BibTexParser\Processor\TrimProcessor;
+
+$listener->addProcessor(new TrimProcessor());
+```
+
+```bib
+@misc{
+  title=" to much spaces  "
+}
+```
+
+```
+Array
+(
+    [0] => Array
+        (
+            [type] => misc
+            [title] => to much spaces
+        )
+
+)
+```
+
+</details>
+
+### Url from DOI
+
+Sets `url` tag with [DOI](https://www.doi.org/) if `doi` tag is present and `url` tag is missing.
+
+<details><summary>Usage</summary>
+
+```php
+use RenanBr\BibTexParser\Processor\UrlFromDoiProcessor;
+
+$listener->addProcessor(new UrlFromDoiProcessor());
+```
+
+```bib
+@misc{
+  doi="qwerty"
+}
+
+@misc{
+  doi="azerty",
+  url="http://example.org"
+}
+```
+
+```
+Array
+(
+    [0] => Array
+        (
+            [type] => misc
+            [doi] => qwerty
+            [url] => https://doi.org/qwerty
+        )
+
+    [1] => Array
+        (
+            [type] => misc
+            [doi] => azerty
+            [url] => http://example.org
+        )
+)
+```
+
+</details>
+
 ### LaTeX to unicode
 
 BibTeX files store LaTeX contents. You might want to read them as unicode instead. The `LatexToUnicodeProcessor` class solves this problem, but before adding the processor to the listener you must:
 
 - [install Pandoc](http://pandoc.org/installing.html) in your system; and
 - add [ryakad/pandoc-php](https://github.com/ryakad/pandoc-php) as a dependency of your project.
+
+<details><summary>Usage</summary>
 
 ```php
 use RenanBr\BibTexParser\Processor\LatexToUnicodeProcessor;
@@ -244,11 +435,15 @@ Array
 )
 ```
 
+</details>
+
 Note: Order matters, add this processor as the last.
 
 ### Custom
 
 The `Listener::addProcessor()` method expects a [callable] as argument. In the example shown below, we append the text `with laser` to the `title` tags for all entries.
+
+<details><summary>Usage</summary>
 
 ```php
 $listener->addProcessor(function (array $entry) {
@@ -273,6 +468,8 @@ Array
         )
 )
 ```
+
+</details>
 
 ## Handling errors
 
