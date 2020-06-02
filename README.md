@@ -19,8 +19,6 @@
 
 You are browsing the documentation of **BibTeX Parser 2.x**, the latest version.
 
-[Documentation for version 1.x is available here](https://github.com/renanbr/bibtex-parser/blob/1.x/README.md).
-
 ## Table of contents
 
 * [Installing](#installing)
