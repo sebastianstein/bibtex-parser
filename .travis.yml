@@ -52,6 +52,7 @@ jobs:
 
         - name: Coding Standards
           php: 7.4
-          script:
+          before_script:
               - wget https://cs.symfony.com/download/php-cs-fixer-v2.phar -O php-cs-fixer
-              - php php-cs-fixer fix --dry-run --diff --using-cache=no -vvv
+          script:
+              - php php-cs-fixer fix --dry-run --diff --no-interaction --show-progress=none --using-cache=no -vvv
