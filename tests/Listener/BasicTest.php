@@ -50,5 +50,15 @@ class BasicTest extends TestCase
         $entry = $entries[0];
         $this->assertSame('new type value', $entry['type']);
         $this->assertSame('bar', $entry['foo']);
+
+        return $entry;
+    }
+
+    /**
+     * @depends testTypeOverriding
+     */
+    public function testOriginalTypeIsAvailable(array $entry)
+    {
+        $this->assertSame('typeOverriding', $entry['_type']);
     }
 }
