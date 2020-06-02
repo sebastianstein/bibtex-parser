@@ -26,8 +26,6 @@ class LatexToUnicodeProcessor
     private $pandoc;
 
     /**
-     * @param array $entry
-     *
      * @return array
      */
     public function __invoke(array $entry)
@@ -70,14 +68,7 @@ class LatexToUnicodeProcessor
                 'to' => 'plain',
             ]);
         } catch (PandocException $exception) {
-            throw new ProcessorException(
-                sprintf(
-                    'Error while processing LaTeX to Unicode: %s',
-                    $exception->getMessage()
-                ),
-                0,
-                $exception
-            );
+            throw new ProcessorException(sprintf('Error while processing LaTeX to Unicode: %s', $exception->getMessage()), 0, $exception);
         }
     }
 }
