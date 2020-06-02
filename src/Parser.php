@@ -448,7 +448,6 @@ class Parser
     /**
      * @param string $text
      * @param string $type
-     * @param array  $context
      */
     private function triggerListeners($text, $type, array $context)
     {

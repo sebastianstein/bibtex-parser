@@ -27,7 +27,7 @@ class FillMissingProcessor
         $tags = array_keys($entry);
 
         foreach ($this->missingFields as $tag => $value) {
-            if(!$this->tagSearch($tag, $tags)) {
+            if (!$this->tagSearch($tag, $tags)) {
                 $entry[$tag] = $value;
             }
         }

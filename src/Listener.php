@@ -84,7 +84,7 @@ class Listener implements ListenerInterface
             case Parser::RAW_TAG_CONTENT:
                 // Searchs for an abbreviation
                 foreach ($this->entries as $entry) {
-                    if ('string' === $entry['type'] && array_key_exists($text, $entry)) {
+                    if ('string' === $entry['type'] && \array_key_exists($text, $entry)) {
                         $text = $entry[$text];
                         break;
                     }

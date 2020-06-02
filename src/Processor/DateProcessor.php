@@ -33,8 +33,6 @@ class DateProcessor
     }
 
     /**
-     * @param array $entry
-     *
      * @return array
      */
     public function __invoke(array $entry)
