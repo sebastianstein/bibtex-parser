@@ -15,9 +15,12 @@ class FillMissingProcessor
 {
     use TagSearchTrait;
 
+    /**
+     * @var array
+     */
     protected $missingFields;
 
-    public function __construct($missingFields)
+    public function __construct(array $missingFields)
     {
         $this->missingFields = $missingFields;
     }
