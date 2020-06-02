@@ -70,7 +70,7 @@ class LatexToUnicodeProcessorTest extends TestCase
 
         // Some sanity checks to make sure it didn't screw the rest of the entry
         $this->assertCount(4, $entries[0]);
-        $this->assertSame('tagContentLatex', $entries[0]['type']);
+        $this->assertSame('tagContentLatex', $entries[0]['type']); // @legacy
         $this->assertSame('tagContentLatex', $entries[0]['_type']);
         $this->assertInternalType('string', $entries[0]['_original']);
 
