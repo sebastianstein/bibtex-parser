@@ -1,12 +1,12 @@
 <h1 align="center">PHP BibTeX Parser 2.x</h1>
 <p align="center">
     This is a
-    <a href="https://www.ctan.org/pkg/bibtex">BibTeX</a>
+    <a href="https://tug.org/bibtex/">BibTeX</a>
     parser written in
     <a href="https://php.net">PHP</a>.
 </p>
 <p align="center">
-    <a href="https://www.ctan.org/pkg/bibtex">
+    <a href="https://tug.org/bibtex/">
         <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/BibTeX_logo.svg" height="83" alt="BibTeX logo">
     </a>
     <a href="https://php.net">
@@ -101,13 +101,16 @@ Array
 
 ## Vocabulary
 
-BibTeX is all about "entry", "tag's name" and "tag's content".
+[BibTeX] is all about "entry", "tag's name" and "tag's content".
 
-> A BibTeX **entry** consists of the type (the word after @), a citation-key and a number of tags which define various characteristics of the specific BibTeX entry. (...) A BibTeX **tag** is specified by its **name** followed by an equals-sign and the **content**.
+> A [BibTeX] **entry** consists of the type (the word after @), a citation-key and a number of tags which define various characteristics of the specific [BibTeX] entry.
+> (...) A [BibTeX] **tag** is specified by its **name** followed by an equals sign, and the **content**.
 
 Source: http://www.bibtex.org/Format/
 
-Note: This library considers "type" and "citation-key" as tags. This behavior can be changed implementing your own Listener (more info at the end of this document).
+Note:
+This library considers "type" and "citation-key" as tags.
+This behavior can be changed [implementing your own Listener](#advanced-usage).
 
 ## Processors
 
@@ -115,26 +118,29 @@ Note: This library considers "type" and "citation-key" as tags. This behavior ca
 
 This library contains three main parts:
 
-- `Parser` class, responsible for detecting units inside a BibTeX input;
+- `Parser` class, responsible for detecting units inside a [BibTeX] input;
 - `Listener` class, responsible for gathering units and transforming them into a list of entries;
 - `Processor` classes, responsible for manipulating entries.
 
-Despite you can't configure the `Parser`, you can append as many `Processor` as you want to the `Listener` through `Listener::addProcessor()` before exporting the contents. Be aware that `Listener` provides, by default, these features:
+Despite you can't configure the `Parser`, you can append as many `Processor` as you want to the `Listener` through `Listener::addProcessor()` before exporting the contents.
+Be aware that `Listener` provides, by default, these features:
 
 - Found entries are reachable through `Listener::export()` method;
 - [Tag content concatenation](http://www.bibtex.org/Format/);
     - e.g. `hello # " world"` tag's content will generate `hello world` [string]
 - [Tag content abbreviation handling](http://www.bibtex.org/Format/);
     - e.g. `@string{foo="bar"} @misc{bar=foo}` will make `$entries[1]['bar']` assume `bar` as value
-- Publication's type is exposed as `_type` tag;
-- Citation key is exposed as `citation-key` tag;
-- Original entry text is exposed as `_original` tag.
+- Publication's type exposed as `_type` tag;
+- Citation key exposed as `citation-key` tag;
+- Original entry text exposed as `_original` tag.
 
-This project is shipped with some useful processors.
+This project ships some useful processors.
 
 ### Tag name case
 
-In BibTeX the tag's names aren't case-sensitive. This library exposes entries as [array], in which keys are case-sensitive. To avoid this misunderstanding, you can force the tags' name character case using `TagNameCaseProcessor`.
+In [BibTeX] the tag's names aren't case-sensitive.
+This library exposes entries as [array], in which keys are case-sensitive.
+To avoid this misunderstanding, you can force the tags' name character case using `TagNameCaseProcessor`.
 
 <details><summary>Usage</summary>
 
@@ -165,7 +171,8 @@ Array
 
 ### Authors and editors
 
-BibTeX recognizes four parts of an author's name: First Von Last Jr. If you would like to parse the `author` and `editor` tags included in your entries, you can use the `NamesProcessor` class.
+[BibTeX] recognizes four parts of an author's name: First Von Last Jr.
+If you would like to parse the `author` and `editor` tags included in your entries, you can use the `NamesProcessor` class.
 
 <details><summary>Usage</summary>
 
@@ -245,7 +252,7 @@ Array
 
 ### Date
 
-It adds a new tag `_date` as [DateTimeImmutable](https://www.php.net/manual/class.datetimeimmutable.php).
+It adds a new tag `_date` as [DateTimeImmutable].
 This processor adds the new tag **if and only if** this the tags `month` and `year` are fulfilled.
 
 <details><summary>Usage</summary>
@@ -283,7 +290,7 @@ Array
 
 </details>
 
-### Fill missing
+### Fill missing tag
 
 It puts a default value to some missing field.
 
@@ -327,9 +334,9 @@ Array
 
 </details>
 
-### Trim
+### Trim tags
 
-Apply [trim()](https://www.php.net/trim) to all tags.
+Apply [trim()] to all tags.
 
 <details><summary>Usage</summary>
 
@@ -341,7 +348,7 @@ $listener->addProcessor(new TrimProcessor());
 
 ```bib
 @misc{
-  title=" to much spaces  "
+  title=" too much space  "
 }
 ```
 
@@ -351,7 +358,7 @@ Array
     [0] => Array
         (
             [type] => misc
-            [title] => to much spaces
+            [title] => too much space
         )
 
 )
@@ -359,9 +366,9 @@ Array
 
 </details>
 
-### Url from DOI
+### Determine URL from the DOI
 
-Sets `url` tag with [DOI](https://www.doi.org/) if `doi` tag is present and `url` tag is missing.
+Sets `url` tag with [DOI] if `doi` tag is present and `url` tag is missing.
 
 <details><summary>Usage</summary>
 
@@ -405,7 +412,9 @@ Array
 
 ### LaTeX to unicode
 
-BibTeX files store LaTeX contents. You might want to read them as unicode instead. The `LatexToUnicodeProcessor` class solves this problem, but before adding the processor to the listener you must:
+[BibTeX] files store [LaTeX] contents.
+You might want to read them as unicode instead.
+The `LatexToUnicodeProcessor` class solves this problem, but before adding the processor to the listener you must:
 
 - [install Pandoc](http://pandoc.org/installing.html) in your system; and
 - add [ryakad/pandoc-php](https://github.com/ryakad/pandoc-php) as a dependency of your project.
@@ -441,12 +450,13 @@ Note: Order matters, add this processor as the last.
 
 ### Custom
 
-The `Listener::addProcessor()` method expects a [callable] as argument. In the example shown below, we append the text `with laser` to the `title` tags for all entries.
+The `Listener::addProcessor()` method expects a [callable] as argument.
+In the example shown below, we append the text `with laser` to the `title` tags for all entries.
 
 <details><summary>Usage</summary>
 
 ```php
-$listener->addProcessor(function (array $entry) {
+$listener->addProcessor(static function (array $entry) {
     $entry['title'] .= ' with laser';
     return $entry;
 });
@@ -473,7 +483,12 @@ Array
 
 ## Handling errors
 
-This library throws two types of exception: `ParserException` and `ProcessorException`. The first one may happen during the data extraction. When it occurs it probably means the parsed BibTeX isn't valid. The second exception may be throwed during the data processing. When it occurs it means the listener's processors can't handle properly the data found. Both implement `ExceptionInterface`.
+This library throws two types of exception: `ParserException` and `ProcessorException`.
+The first one may happen during the data extraction.
+When it occurs it probably means the parsed BibTeX isn't valid.
+The second exception may happen during the data processing.
+When it occurs it means the listener's processors can't handle properly the data found.
+Both implement `ExceptionInterface`.
 
 ```php
 use RenanBr\BibTexParser\Exception\ExceptionInterface;
@@ -496,17 +511,21 @@ try {
 
 ## Advanced usage
 
-The core of this library is constituted of these classes:
+The core of this library contains these main classes:
 
-- `RenanBr\BibTexParser\Parser`: responsible for detecting units inside a BibTeX input;
-- `RenanBr\BibTexParser\ListenerInterface`: responsible for treating units found.
+- `RenanBr\BibTexParser\Parser` responsible for detecting units inside a [BibTeX] input;
+- `RenanBr\BibTexParser\ListenerInterface` responsible for treating units found.
 
-You can attach listeners to the parser through `Parser::addListener()`. The parser is able to detect BibTeX units, such as "type", "tag's name", "tag's content". As the parser finds an unit, listeners are triggered.
+You can attach listeners to the parser through `Parser::addListener()`.
+The parser is able to detect [BibTeX] units, such as "type", "tag's name", "tag's content".
+As the parser finds a unit, it triggers the listeners attached to it.
 
 You can code your own listener! All you have to do is handle units.
 
 ```php
-interface RenanBr\BibTexParser\ListenerInterface
+namespace RenanBr\BibTexParser;
+
+interface ListenerInterface
 {
     /**
      * Called when an unit is found.
@@ -531,13 +550,18 @@ interface RenanBr\BibTexParser\ListenerInterface
 - `Parser::QUOTED_TAG_CONTENT`
 - `Parser::ENTRY`
 
-`$context` is an array with these keys:
+`$context` is an [array] with these keys:
 
 - `offset` contains the `$text`'s beginning position.
   It may be useful, for example, to [seek on a file pointer](https://php.net/fseek);
 - `length` contains the original `$text`'s length.
-  It may differ from string length sent to the listener because may there are escaped characters.
+  It may differ from [string] length sent to the listener because may there are escaped characters.
 
+[BibTeX]: https://tug.org/bibtex/
+[DOI]: https://www.doi.org/
+[DateTimeImmutable]: https://www.php.net/manual/class.datetimeimmutable.php
+[LaTeX]: https://www.latex-project.org/
 [array]: https://php.net/manual/language.types.array.php
 [callable]: https://php.net/manual/en/language.types.callable.php
 [string]: https://php.net/manual/language.types.string.php
+[trim()]: https://www.php.net/trim

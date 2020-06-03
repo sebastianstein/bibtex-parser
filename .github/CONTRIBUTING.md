@@ -2,13 +2,13 @@
 
 ## Some ways to contribute
 
-- Reporting a issue:
+- Reporting an issue:
     - [Make a question](https://github.com/renanbr/bibtex-parser/issues/new?title=Type%20your%20question%20here&labels=question)
     - [Report a bug](https://github.com/renanbr/bibtex-parser/issues/new?title=Describe%20the%20problem%20you%27re%20facing%20here&labels=bug)
 - Improving or fixing the documentation [editing a file directly on GitHub](https://help.github.com/articles/editing-files-in-another-user-s-repository/);
 - Coding (next section).
 
-## An usual developer's journey
+## A usual developer's journey
 
 1. [Fork the repository](https://help.github.com/articles/fork-a-repo/);
 2. Install the project;
@@ -28,7 +28,7 @@ vendor/bin/phpunit --coverage-html=build/coverage
 
 ### Coding standards
 
-This project uses [PHP Coding Standards Fixer] to check and fix rules violations. The coding standards are defined in the `.php_cs` file. Related commands:
+This project uses [PHP Coding Standards Fixer] to check and fix rules violations. The `.php_cs` file contains the coding standards. Related commands:
 
 ```bash
 # For checking violations

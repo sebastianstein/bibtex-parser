@@ -82,7 +82,7 @@ class Listener implements ListenerInterface
                 break;
 
             case Parser::RAW_TAG_CONTENT:
-                // Searchs for an abbreviation
+                // Searches for an abbreviation
                 foreach ($this->entries as $entry) {
                     if ('string' === $entry['type'] && \array_key_exists($text, $entry)) {
                         $text = $entry[$text];
