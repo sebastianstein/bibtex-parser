@@ -14,8 +14,10 @@
     </a>
 </p>
 
-[![Build Status](https://travis-ci.org/renanbr/bibtex-parser.svg?branch=master)](https://travis-ci.org/renanbr/bibtex-parser)
+![Tests](https://github.com/renanbr/bibtex-parser/workflows/Tests/badge.svg)
 [![codecov](https://codecov.io/gh/renanbr/bibtex-parser/branch/master/graph/badge.svg)](https://codecov.io/gh/renanbr/bibtex-parser)
+![Static Analysis](https://github.com/renanbr/bibtex-parser/workflows/Static%20Analysis/badge.svg)
+![Coding Standards](https://github.com/renanbr/bibtex-parser/workflows/Coding%20Standards/badge.svg)
 
 You are browsing the documentation of **BibTeX Parser 2.x**, the latest version.
 
