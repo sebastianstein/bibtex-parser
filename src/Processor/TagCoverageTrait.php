@@ -16,7 +16,10 @@ trait TagCoverageTrait
     use TagSearchTrait;
 
     /** @var array */
-    private $tagCoverageList = [];
+    private $tagCoverageList = [
+        '_original',
+        '_type',
+    ];
 
     /** @var string */
     private $tagCoverageStrategy = 'blacklist';
