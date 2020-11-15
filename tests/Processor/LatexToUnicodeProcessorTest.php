@@ -21,7 +21,10 @@ use RenanBr\BibTexParser\Processor\LatexToUnicodeProcessor;
  */
 class LatexToUnicodeProcessorTest extends TestCase
 {
-    protected function setUp()
+    /**
+     * @before
+     */
+    protected function checkPandoc()
     {
         exec('which pandoc', $output, $retVal);
         if (0 !== $retVal) {
@@ -72,7 +75,7 @@ class LatexToUnicodeProcessorTest extends TestCase
         $this->assertCount(4, $entries[0]);
         $this->assertSame('tagContentLatex', $entries[0]['type']); // @legacy
         $this->assertSame('tagContentLatex', $entries[0]['_type']);
-        $this->assertInternalType('string', $entries[0]['_original']);
+        $this->assertTrue(\is_string($entries[0]['_original']));
 
         $this->assertSame('cafés', $entries[0]['consensus']);
     }

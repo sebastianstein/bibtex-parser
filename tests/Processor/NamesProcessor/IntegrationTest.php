@@ -35,7 +35,7 @@ class IntegrationTest extends TestCase
         $this->assertCount(4, $entries[0]);
         $this->assertSame('authorssimple', $entries[0]['type']); // @legacy
         $this->assertSame('authorssimple', $entries[0]['_type']);
-        $this->assertInternalType('string', $entries[0]['_original']);
+        $this->assertTrue(\is_string($entries[0]['_original']));
 
         $this->assertCount(1, $entries[0]['author']);
         $this->assertSame('John', $entries[0]['author'][0]['first']);
