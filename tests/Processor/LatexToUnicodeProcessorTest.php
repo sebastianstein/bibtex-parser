@@ -75,7 +75,11 @@ class LatexToUnicodeProcessorTest extends TestCase
         $this->assertCount(4, $entries[0]);
         $this->assertSame('tagContentLatex', $entries[0]['type']); // @legacy
         $this->assertSame('tagContentLatex', $entries[0]['_type']);
-        $this->assertTrue(\is_string($entries[0]['_original']));
+
+        $this->assertSame(
+            trim(file_get_contents(__DIR__.'/../resources/valid/tag-contents-latex.bib')),
+            $entries[0]['_original'])
+        ;
 
         $this->assertSame('cafés', $entries[0]['consensus']);
     }

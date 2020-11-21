@@ -72,7 +72,11 @@ class KeywordsProcessorTest extends TestCase
         $this->assertCount(4, $entries[0]);
         $this->assertSame('keywordsSimple', $entries[0]['type']); // @legacy
         $this->assertSame('keywordsSimple', $entries[0]['_type']);
-        $this->assertTrue(\is_string($entries[0]['_original']));
+
+        $this->assertSame(
+            trim(file_get_contents(__DIR__.'/../resources/valid/keywords-simple.bib')),
+            $entries[0]['_original'])
+        ;
 
         $this->assertSame(['foo', 'bar'], $entries[0]['keywords']);
     }
