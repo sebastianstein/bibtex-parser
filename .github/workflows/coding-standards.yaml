@@ -1,9 +1,11 @@
 name: Coding Standards
 
 on:
+
     push:
         branches:
-            - master
+            - main
+
     pull_request:
 
 jobs:
