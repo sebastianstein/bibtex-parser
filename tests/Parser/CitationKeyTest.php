@@ -67,4 +67,28 @@ class CitationKeyTest extends TestCase
         $this->assertSame('Kyriakakis:2016:EMI:3003733.3003777', $text);
         $this->assertSame(Parser::CITATION_KEY, $type);
     }
+
+    /**
+     * @group regression
+     * @group bug94
+     *
+     * @see https://github.com/renanbr/bibtex-parser/issues/94
+     */
+    public function testSpecialCharactersKey()
+    {
+        $listener = new DummyListener();
+
+        $parser = new Parser();
+        $parser->addListener($listener);
+        $parser->parseString('@article{schünemann2013evaluation}');
+
+        // 0 -> type
+        // 1 -> citation key
+        // 2 -> original entry
+        $this->assertCount(3, $listener->calls);
+        list($text, $type) = $listener->calls[1];
+
+        $this->assertSame('schünemann2013evaluation', $text);
+        $this->assertSame(Parser::CITATION_KEY, $type);
+    }
 }
