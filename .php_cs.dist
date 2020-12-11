@@ -10,6 +10,7 @@ file that was distributed with this source code.
 EOF;
 
 return PhpCsFixer\Config::create()
+    ->setCacheFile(__DIR__.'/var/.php_cs.cache')
     ->setRiskyAllowed(true)
     ->setRules([
         '@Symfony' => true,

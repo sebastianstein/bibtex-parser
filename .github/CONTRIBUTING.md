@@ -1,45 +1,83 @@
 # Contributing to BibTex Parser
 
-## Some ways to contribute
+First, thank you for reaching here.
 
-- Reporting an issue:
-    - [Make a question](https://github.com/renanbr/bibtex-parser/issues/new?title=Type%20your%20question%20here&labels=question)
-    - [Report a bug](https://github.com/renanbr/bibtex-parser/issues/new?title=Describe%20the%20problem%20you%27re%20facing%20here&labels=bug)
-- Improving or fixing the documentation [editing a file directly on GitHub](https://help.github.com/articles/editing-files-in-another-user-s-repository/);
-- Coding (next section).
+## Issues
 
-## A usual developer's journey
+If you want to report bugs, ask for enhancements, or other requests, [open an issue].
 
-1. [Fork the repository](https://help.github.com/articles/fork-a-repo/);
-2. Install the project;
-    - [Create a local clone of your fork](https://help.github.com/articles/fork-a-repo/#step-2-create-a-local-clone-of-your-fork)
-    - [Configure Git to sync your fork with the original repository](https://help.github.com/articles/fork-a-repo/#step-3-configure-git-to-sync-your-fork-with-the-original-spoon-knife-repository)
-    - Install dependencies using [Composer]: `composer install`
-3. Code;
-4. [Make a pull request](https://help.github.com/articles/creating-a-pull-request-from-a-fork/).
+## Contributing with code
 
-### Tests
+### Requirements
 
-This project uses [PHPUnit] as testing framework. Tests configuration is store in the `phpunit.xml` file. To run tests you can use the following command:
+- [Git]
+- [Make]
+- [Podman] (or [Docker])
+
+### Usual workflow
+
+1. [Fork this project]
+1. Clone the fork to your machine
+    ```bash
+    git clone git@github.com:YOUR_USERNAME/bibtex-parser.git
+    ```
+1. Get inside the project
+    ```bash
+    cd bibtex-parser
+    ```
+1. Check it
+    ```bash
+    make check
+    ```
+    - The `check` recipe will run [static analysis, coding standards checks, and tests](#makefile-recipes).
+    - If something goes wrong, please, [open an issue].
+1. [Create a branch]
+1. Do your magic
+1. Check your changes
+    ```bash
+    make check
+    ```
+    - The `check` recipe will run [static analysis, coding standards checks, and tests](#makefile-recipes).
+    - You might [run tests against some specific PHP version](#run-tests-against-some-specific-php-version).
+1. [Create a pull request]
+
+### Run tests against some specific PHP version
 
 ```bash
-vendor/bin/phpunit --coverage-html=build/coverage
+make clean
+PHP_VERSION=7.3 make test
 ```
 
-### Coding standards
+### Makefile recipes
 
-This project uses [PHP Coding Standards Fixer] to check and fix rules violations. The `.php_cs` file contains the coding standards. Related commands:
+Here is the list of recipes:
 
 ```bash
-# For checking violations
-php-cs-fixer fix --dry-run -vvv
-
-# For fixing violations
-php-cs-fixer fix
+make help
 ```
 
-[Composer]: https://getcomposer.org
-[Git]: https://git-scm.com
-[PHP Coding Standards Fixer]: http://cs.sensiolabs.org
-[PHPUnit]: https://phpunit.de
-[Xdebug]: https://xdebug.org
+```
+Usage:
+  [PHP_VERSION=major.minor] make [target]
+
+Available targets:
+  help                Display this message help
+ Checks
+  check               Run all checks
+  static-analysis     Run static analysis
+  cs-check            Check for coding standards violations
+  test                Run tests
+ Fixers
+  cs-fix              Fix coding standards
+ Misc
+  clean               Clean up workspace
+```
+
+[create a branch]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-and-deleting-branches-within-your-repository
+[create a pull request]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork
+[docker]: https://www.docker.com/
+[fork this project]: https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/working-with-forks
+[git]: https://git-scm.com/
+[make]: https://www.gnu.org/software/make/
+[open an issue]: https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-github/creating-an-issue
+[podman]: https://podman.io/
