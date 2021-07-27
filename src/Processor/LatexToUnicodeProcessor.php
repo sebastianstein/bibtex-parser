@@ -66,6 +66,7 @@ class LatexToUnicodeProcessor
             return $this->pandoc->runWith($text, [
                 'from' => 'latex',
                 'to' => 'plain',
+                'wrap' => 'none',
             ]);
         } catch (PandocException $exception) {
             throw new ProcessorException(sprintf('Error while processing LaTeX to Unicode: %s', $exception->getMessage()), 0, $exception);

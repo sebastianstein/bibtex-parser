@@ -83,4 +83,15 @@ class LatexToUnicodeProcessorTest extends TestCase
 
         $this->assertSame('cafés', $entries[0]['consensus']);
     }
+    
+    public function testDoNotWrapLongText()
+    {
+        $longText = '01234567890123456789012345678901234567890123456789012345678901234567890123456789';
+        $processor = new LatexToUnicodeProcessor();
+        $entry = $processor([
+            'text' => $longText,
+        ]);
+
+        $this->assertSame($longText, $entry['text']);
+    }
 }
