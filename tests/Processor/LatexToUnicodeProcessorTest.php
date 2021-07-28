@@ -86,7 +86,7 @@ class LatexToUnicodeProcessorTest extends TestCase
 
     public function testDoNotWrapLongText()
     {
-        $longText = '01234567890123456789012345678901234567890123456789012345678901234567890123456789';
+        $longText = '0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789 0123456789';
         $processor = new LatexToUnicodeProcessor();
         $entry = $processor([
             'text' => $longText,
