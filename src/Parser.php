@@ -176,6 +176,8 @@ class Parser
                 $this->readPostType($char);
                 break;
             case self::FIRST_TAG_NAME:
+                $this->readFirstTagName($char);
+                break;
             case self::TAG_NAME:
                 $this->readTagName($char);
                 break;
@@ -261,6 +263,53 @@ class Parser
         }
     }
 
+    private function readFirstTagName($char)
+    {
+        if ('}' === $char && empty($this->buffer)) {
+            // No tag name found, $char is just closing current entry
+            $this->state = self::NONE;
+            return;
+        }
+
+        if (preg_match('/^[a-zA-Z0-9_\+:\-\.\/\x{00C0}-\x{01FF}{"\\\\}]$/u', $char)) {
+            if ($this->isTagContentEscaped) {
+                $this->isTagContentEscaped = false;
+                if ($this->tagContentDelimiter !== $char && '\\' !== $char && '%' !== $char) {
+                    $this->appendToBuffer('\\');
+                }
+                $this->appendToBuffer($char);
+            } elseif ('}' === $this->tagContentDelimiter && '{' === $char) {
+                ++$this->braceLevel;
+                $this->appendToBuffer($char);
+            } elseif ($this->tagContentDelimiter === $char) {
+                if (0 === $this->braceLevel) {
+                    $this->triggerListenersWithCurrentBuffer();
+                    $this->mayConcatenateTagContent = true;
+                    $this->state = self::PRE_TAG_CONTENT;
+                } else {
+                    --$this->braceLevel;
+                    $this->appendToBuffer($char);
+                }
+            } elseif ('\\' === $char) {
+                $this->isTagContentEscaped = true;
+            } else {
+                $this->appendToBuffer($char);
+            }
+        } elseif (empty($this->buffer) && $this->isWhitespace($char)) {
+            // Skips because we didn't start reading
+        } else {
+            $this->throwExceptionIfBufferIsEmpty($char);
+            // Takes a snapshot of current state to be triggered later as
+            // tag name or citation key, see readPostTagName()
+            $this->firstTagSnapshot = $this->takeBufferSnapshot();
+
+            // Once $char isn't a valid tag name character, it must be
+            // interpreted as post tag name
+            $this->state = self::POST_TAG_NAME;
+            $this->readPostTagName($char);
+        }
+    }
+
     /**
      * @param string $char
      */
@@ -275,15 +324,8 @@ class Parser
             $this->state = self::NONE;
         } else {
             $this->throwExceptionIfBufferIsEmpty($char);
-
-            if (self::FIRST_TAG_NAME === $this->state) {
-                // Takes a snapshot of current state to be triggered later as
-                // tag name or citation key, see readPostTagName()
-                $this->firstTagSnapshot = $this->takeBufferSnapshot();
-            } else {
-                // Current buffer is a simple tag name
-                $this->triggerListenersWithCurrentBuffer();
-            }
+            // Current buffer is a simple tag name
+            $this->triggerListenersWithCurrentBuffer();
 
             // Once $char isn't a valid tag name character, it must be
             // interpreted as post tag name
@@ -513,7 +555,7 @@ class Parser
 
     /**
      * @param string $char
-     * @param bool   $availability
+     * @param bool $availability
      */
     private function throwExceptionAccordingToConcatenationAvailability($char, $availability)
     {
