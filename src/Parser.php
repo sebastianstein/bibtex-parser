@@ -271,7 +271,12 @@ class Parser
             return;
         }
 
-        if (preg_match('/^[a-zA-Z0-9_\+:\-\.\/\x{00C0}-\x{01FF}{"\\\\}]$/u', $char)) {
+        if (empty($this->buffer) && $this->isWhitespace($char)) {
+            return;
+            // Skips because we didn't start reading
+        }
+
+        if (preg_match('/^[a-zA-Z0-9_\+:\-\.\/\x{00C0}-\x{01FF}{"\\\\}‑]$/u', $char) || $this->isWhitespace($char)) {
             if ($this->isTagContentEscaped) {
                 $this->isTagContentEscaped = false;
                 if ($this->tagContentDelimiter !== $char && '\\' !== $char && '%' !== $char) {
@@ -295,8 +300,6 @@ class Parser
             } else {
                 $this->appendToBuffer($char);
             }
-        } elseif (empty($this->buffer) && $this->isWhitespace($char)) {
-            // Skips because we didn't start reading
         } else {
             $this->throwExceptionIfBufferIsEmpty($char);
             // Takes a snapshot of current state to be triggered later as
