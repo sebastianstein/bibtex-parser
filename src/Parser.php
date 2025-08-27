@@ -276,7 +276,7 @@ class Parser
             // Skips because we didn't start reading
         }
 
-        if (preg_match('/^[a-zA-Z0-9_\+:\-\.\/\x{00C0}-\x{01FF}{"\\\\}‑]$/u', $char) || $this->isWhitespace($char)) {
+        if (preg_match('/^[a-zA-Z0-9_\+:\-\.\/\{\}\\\\`"\',\x{00C0}-\x{01FF}]$/u', $char) || ($this->isWhitespace($char) && $char !== "\n")) {
             if ($this->isTagContentEscaped) {
                 $this->isTagContentEscaped = false;
                 if ($this->tagContentDelimiter !== $char && '\\' !== $char && '%' !== $char) {
@@ -300,6 +300,18 @@ class Parser
             } else {
                 $this->appendToBuffer($char);
             }
+            return;
+        }
+
+        if ($char === "\n" && substr($this->buffer, -1) === ",") {
+            $this->buffer = rtrim($this->buffer, ',');
+
+            $this->throwExceptionIfBufferIsEmpty($char);
+            $this->firstTagSnapshot = $this->takeBufferSnapshot();
+
+            // First tag name is a citation key, because $char moves to the next tag and lets first tag without value
+            $this->triggerListenersWithFirstTagSnapshotAs(self::CITATION_KEY);
+            $this->state = self::TAG_NAME;
         } else {
             $this->throwExceptionIfBufferIsEmpty($char);
             // Takes a snapshot of current state to be triggered later as
@@ -351,11 +363,6 @@ class Parser
             // lets first tag without value
             $this->triggerListenersWithFirstTagSnapshotAs(self::CITATION_KEY);
             $this->state = self::NONE;
-        } elseif (',' === $char) {
-            // First tag name is a citation key, because $char moves to the next
-            // tag and lets first tag without value
-            $this->triggerListenersWithFirstTagSnapshotAs(self::CITATION_KEY);
-            $this->state = self::TAG_NAME;
         } elseif (!$this->isWhitespace($char)) {
             throw ParserException::unexpectedCharacter($char, $this->line, $this->column);
         }
